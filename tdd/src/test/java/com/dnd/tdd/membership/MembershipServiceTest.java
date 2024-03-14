@@ -45,16 +45,18 @@ public class MembershipServiceTest {
 		doReturn(membership()).when(membershipRepository).save(any(Membership.class));
 
 		// when
-		final Membership result = memberService.addMembership(userId, membershipType, point);
+		final MembershipResponse result = memberService.addMembership(userId, membershipType, point);
 
 		// then
-		assertThat(result.getId()).isNotNull();
-		assertThat(result.getMembershipType()).isEqualTo(MembershipType.NAVER);
+		assertThat(result.membershipType()).isEqualTo(MembershipType.NAVER.getCompanyName());
+
+		// verify
+		verify(membershipRepository, times(1)).findByUserIdAndMembershipType(userId, membershipType);
+		verify(membershipRepository, times(1)).save(any(Membership.class));
 	}
 
 	private Membership membership() {
 		return Membership.builder()
-			.id(-1L)
 			.userId(userId)
 			.point(point)
 			.membershipType(membershipType)

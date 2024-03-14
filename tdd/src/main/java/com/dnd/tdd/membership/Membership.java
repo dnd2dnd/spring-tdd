@@ -28,8 +28,7 @@ public class Membership {
 	private Integer point;
 
 	@Builder
-	public Membership(Long id, String userId, MembershipType membershipType, Integer point) {
-		this.id = id;
+	public Membership(String userId, MembershipType membershipType, Integer point) {
 		this.userId = userId;
 		this.membershipType = membershipType;
 		this.point = point;
