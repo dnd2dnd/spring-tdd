@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +34,15 @@ public class MembershipController {
 		@RequestParam(name = "userId") String userId
 	) {
 		List<MembershipDetailResponse> responses = membershipService.getMembershipList(userId);
+		return ResponseEntity.ok().body(responses);
+	}
+
+	@GetMapping("/api/v1/membership/{id}")
+	public ResponseEntity<MembershipDetailResponse> getMembership(
+		@PathVariable(name = "id") Long id,
+		@RequestParam(name = "userId") String userId
+	) {
+		MembershipDetailResponse responses = membershipService.getMembership(id, userId);
 		return ResponseEntity.ok().body(responses);
 	}
 }

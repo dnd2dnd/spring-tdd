@@ -36,4 +36,13 @@ public class MembershipService {
 			.map(MembershipDetailResponse::from)
 			.toList();
 	}
+
+	public MembershipDetailResponse getMembership(Long membershipId, String userId) {
+		Membership membership = membershipRepository.getById(membershipId);
+		if(!membership.getUserId().equals(userId)) {
+			throw new MembershipException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
+		}
+
+		return MembershipDetailResponse.from(membership);
+	}
 }

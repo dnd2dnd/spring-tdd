@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,7 @@ public class MembershipServiceTest {
 	private MembershipRepository membershipRepository;
 
 
+	private final Long membershipId = 1L;
 	private final String userId = "userId";
 	private final MembershipType membershipType = MembershipType.NAVER;
 	private final Integer point = 10000;
@@ -79,6 +81,31 @@ public class MembershipServiceTest {
 		assertThat(result.size()).isEqualTo(3);
 	}
 
+	@Test
+	void 멤버십상세조회실패_본인이아님() {
+		// given
+		doReturn(membership()).when(membershipRepository).getById(membershipId);
+
+		// when
+		final MembershipException result = assertThrows(MembershipException.class,
+			() -> membershipService.getMembership(membershipId, "notOwner"));
+
+		// then
+		assertThat(result.getMembershipErrorCode()).isEqualTo(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
+	}
+
+	@Test
+	void 멤버십상세조회에_성공한다() {
+		// given
+		doReturn(membership()).when(membershipRepository).getById(membershipId);
+
+		// when
+		final MembershipDetailResponse result = membershipService.getMembership(membershipId, userId);
+
+		// then
+		assertThat(result.userId()).isEqualTo(userId);
+		assertThat(result.point()).isEqualTo(point);
+	}
 
 	private Membership membership() {
 		return Membership.builder()

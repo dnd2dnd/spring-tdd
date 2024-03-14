@@ -120,6 +120,42 @@ public class MembershipControllerTest {
 		resultActions.andExpect(status().isOk());
 	}
 
+	@Test
+	void 멤버십이_존재하지않아_상세조회에_실패한다() throws Exception {
+		// given
+		final String url = "/api/v1/membership/{id}";
+		doThrow(new MembershipException(MembershipErrorCode.MEMBERSHIP_NOT_FOUND))
+			.when(membershipService)
+			.getMembership(-1L, "userId");
+
+		// when
+		final ResultActions resultActions = mockMvc.perform(
+			MockMvcRequestBuilders.get(url, -1L)
+				.param("userId", "userId")
+		);
+
+		// then
+		resultActions.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void 멤버십_상세조회에_성공한다() throws Exception {
+		// given
+		final String url = "/api/v1/membership/{id}";
+		doReturn(MembershipDetailResponse.builder().build())
+			.when(membershipService)
+			.getMembership(1L, "userId");
+
+		// when
+		final ResultActions resultActions = mockMvc.perform(
+			MockMvcRequestBuilders.get(url, 1L)
+				.param("userId", "userId")
+		);
+
+		// then
+		resultActions.andExpect(status().isOk());
+	}
+
 	private static Stream<Arguments> invalidMembershipAddParameters() {
 		return Stream.of(
 			Arguments.of(null, NAVER, 10000),
