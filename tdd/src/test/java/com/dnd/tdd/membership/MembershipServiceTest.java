@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -49,7 +52,7 @@ public class MembershipServiceTest {
 		doReturn(membership()).when(membershipRepository).save(any(Membership.class));
 
 		// when
-		final MembershipResponse result = membershipService.addMembership(
+		final MembershipAddResponse result = membershipService.addMembership(
 			new MembershipRequest("userId", MembershipType.NAVER, 10000));
 
 		// then
@@ -59,6 +62,23 @@ public class MembershipServiceTest {
 		verify(membershipRepository, times(1)).findByUserIdAndMembershipType(userId, membershipType);
 		verify(membershipRepository, times(1)).save(any(Membership.class));
 	}
+
+	@Test
+	void 멤버십목록을_조회한다() {
+		// given
+		doReturn(Arrays.asList(
+			Membership.builder().build(),
+			Membership.builder().build(),
+			Membership.builder().build()
+		)).when(membershipRepository).findAllByUserId(userId);
+
+		// when
+		final List<MembershipDetailResponse> result = membershipService.getMembershipList(userId);
+
+		// then
+		assertThat(result.size()).isEqualTo(3);
+	}
+
 
 	private Membership membership() {
 		return Membership.builder()

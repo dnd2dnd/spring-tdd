@@ -4,6 +4,7 @@ import static com.dnd.tdd.membership.MembershipType.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -97,6 +98,26 @@ public class MembershipControllerTest {
 
 		// then
 		resultActions.andExpect(status().isCreated());
+	}
+
+	@Test
+	void 멤버십목록_조회에_성공한다() throws Exception {
+		// given
+		final String url = "/api/v1/membership";
+		doReturn(Arrays.asList(
+			MembershipDetailResponse.builder().build(),
+			MembershipDetailResponse.builder().build(),
+			MembershipDetailResponse.builder().build()
+		)).when(membershipService).getMembershipList("userId");
+
+		// when
+		final ResultActions resultActions = mockMvc.perform(
+			MockMvcRequestBuilders.get(url)
+				.param("userId", "userId")
+		);
+
+		// then
+		resultActions.andExpect(status().isOk());
 	}
 
 	private static Stream<Arguments> invalidMembershipAddParameters() {
