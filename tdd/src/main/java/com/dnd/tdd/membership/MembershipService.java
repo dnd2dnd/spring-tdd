@@ -6,26 +6,26 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class MembershipService {
 
 	private final MembershipRepository membershipRepository;
 
-	public MembershipResponse addMembership(String userId, MembershipType membershipType, Integer point) {
-		Membership result = membershipRepository.findByUserIdAndMembershipType(userId, membershipType);
+	public MembershipResponse addMembership(MembershipRequest membershipRequest) {
+		Membership result = membershipRepository.findByUserIdAndMembershipType(membershipRequest.userId(), membershipRequest.membershipType());
 		if(result != null) {
 			throw new MembershipException(MembershipErrorCode.DUPLICATED_MEMBERSHIP_REGISTER);
 		}
 
 		Membership membership = Membership.builder()
-			.userId(userId)
-			.membershipType(membershipType)
-			.point(point)
+			.userId(membershipRequest.userId())
+			.membershipType(membershipRequest.membershipType())
+			.point(membershipRequest.point())
 			.build();
 		membershipRepository.save(membership);
 
 		return MembershipResponse.builder()
 			.id(membership.getId())
-			.membershipType(membershipType.getCompanyName())
+			.membershipType(membershipRequest.membershipType().getCompanyName())
 			.build();
 	}
 

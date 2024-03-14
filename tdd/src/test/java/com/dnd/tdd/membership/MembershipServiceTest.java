@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class MembershipServiceTest {
 
 	@InjectMocks
-	private MemberService memberService;
+	private MembershipService membershipService;
 
 	@Mock
 	private MembershipRepository membershipRepository;
@@ -31,7 +31,11 @@ public class MembershipServiceTest {
 			.when(membershipRepository).findByUserIdAndMembershipType(userId, membershipType);
 
 		// when
-		final MembershipException result = assertThrows(MembershipException.class, () -> memberService.addMembership(userId, membershipType, point));
+		final MembershipException result = assertThrows(
+			MembershipException.class, () -> {
+				membershipService.addMembership(new MembershipRequest("userId", MembershipType.NAVER, 10000));
+				}
+			);
 
 		// then
 		assertThat(result.getMembershipErrorCode()).isEqualTo(MembershipErrorCode.DUPLICATED_MEMBERSHIP_REGISTER);
@@ -45,7 +49,8 @@ public class MembershipServiceTest {
 		doReturn(membership()).when(membershipRepository).save(any(Membership.class));
 
 		// when
-		final MembershipResponse result = memberService.addMembership(userId, membershipType, point);
+		final MembershipResponse result = membershipService.addMembership(
+			new MembershipRequest("userId", MembershipType.NAVER, 10000));
 
 		// then
 		assertThat(result.membershipType()).isEqualTo(MembershipType.NAVER.getCompanyName());
