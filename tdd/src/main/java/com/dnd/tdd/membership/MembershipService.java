@@ -45,4 +45,10 @@ public class MembershipService {
 
 		return MembershipDetailResponse.from(membership);
 	}
+
+	public void removeMembership(Long membershipId, String userId) {
+		Membership membership = membershipRepository.getById(membershipId);
+		membership.isOwner(userId);
+		membershipRepository.deleteById(membership.getId());
+	}
 }

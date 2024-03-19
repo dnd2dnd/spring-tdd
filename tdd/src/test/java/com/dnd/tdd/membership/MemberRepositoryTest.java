@@ -89,4 +89,21 @@ public class MemberRepositoryTest {
 		// then
 		assertThat(result.getMembershipErrorCode()).isEqualTo(MembershipErrorCode.MEMBERSHIP_NOT_FOUND);
 	}
+
+	@Test
+	void 멤버십삭제에_성공한다() {
+		// given
+		final Membership naverMembership = Membership.builder()
+			.userId("userId")
+			.membershipType(MembershipType.NAVER)
+			.point(10000)
+			.build();
+
+		final Membership membership = membershipRepository.save(naverMembership);
+
+		// when
+		membershipRepository.deleteById(membership.getId());
+
+		// then
+	}
 }

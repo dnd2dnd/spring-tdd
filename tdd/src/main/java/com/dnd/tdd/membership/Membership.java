@@ -35,4 +35,10 @@ public class Membership extends BaseTimeEntity {
 		this.membershipType = membershipType;
 		this.point = point;
 	}
+
+	public void isOwner(String userId) {
+		if(!this.userId.equals(userId)) {
+			throw new MembershipException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
+		}
+	}
 }
